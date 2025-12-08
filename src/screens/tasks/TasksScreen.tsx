@@ -11,8 +11,12 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTasksStore } from '../../store/useTasksStore';
 import TaskItem from '../../components/tasks/TaskItem';
+import ScreenWrapper from '../../components/ScreenWrapper';
+import { useTheme, Theme } from '../../constants/theme';
 
 export default function TasksScreen() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const tasks = useTasksStore((state) => state.items);
   const isLoading = useTasksStore((state) => state.isLoading);
   const error = useTasksStore((state) => state.error);
@@ -50,7 +54,7 @@ export default function TasksScreen() {
   if (isLoading && tasks.length === 0) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
@@ -58,7 +62,7 @@ export default function TasksScreen() {
   if (error && tasks.length === 0) {
     return (
       <View style={styles.centerContainer}>
-        <Ionicons name="alert-circle-outline" size={64} color="#FF3B30" />
+        <Ionicons name="alert-circle-outline" size={64} color={theme.colors.error} />
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity style={styles.retryButton} onPress={loadTasks}>
           <Text style={styles.retryButtonText}>Retry</Text>
@@ -68,17 +72,17 @@ export default function TasksScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScreenWrapper style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>My Tasks</Text>
         <TouchableOpacity style={styles.addButton} onPress={handleAddTask}>
-          <Ionicons name="add-circle" size={32} color="#007AFF" />
+          <Ionicons name="add-circle" size={32} color={theme.colors.primary} />
         </TouchableOpacity>
       </View>
 
       {tasks.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="checkmark-done-outline" size={80} color="#C7C7CC" />
+          <Ionicons name="checkmark-done-outline" size={80} color={theme.colors.disabled} />
           <Text style={styles.emptyText}>No tasks yet</Text>
           <Text style={styles.emptySubtext}>Tap the + button to add your first task</Text>
         </View>
@@ -89,81 +93,81 @@ export default function TasksScreen() {
           renderItem={({ item }) => <TaskItem task={item} onPress={handleTaskPress} />}
           contentContainerStyle={styles.listContent}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#007AFF" />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
           }
         />
       )}
-    </View>
+    </ScreenWrapper>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.colors.surface,
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F2F2F7',
-    padding: 20,
+    backgroundColor: theme.colors.surface,
+    padding: theme.spacing.lg,
   },
   header: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
+    backgroundColor: theme.colors.card,
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing.lg,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
+    borderBottomColor: theme.colors.border,
   },
   headerTitle: {
     fontSize: 34,
     fontWeight: 'bold',
-    color: '#000000',
+    color: theme.colors.text,
   },
   addButton: {
     padding: 4,
   },
   listContent: {
-    padding: 16,
+    padding: theme.spacing.md,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 40,
+    paddingHorizontal: theme.spacing.xl,
   },
   emptyText: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#8E8E93',
-    marginTop: 16,
+    color: theme.colors.textSecondary,
+    marginTop: theme.spacing.md,
   },
   emptySubtext: {
     fontSize: 16,
-    color: '#C7C7CC',
-    marginTop: 8,
+    color: theme.colors.textTertiary,
+    marginTop: theme.spacing.sm,
     textAlign: 'center',
   },
   errorText: {
     fontSize: 18,
-    color: '#FF3B30',
-    marginTop: 16,
+    color: theme.colors.error,
+    marginTop: theme.spacing.md,
     textAlign: 'center',
   },
   retryButton: {
-    marginTop: 20,
+    marginTop: theme.spacing.lg,
     paddingHorizontal: 30,
     paddingVertical: 12,
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.borderRadius.md,
   },
   retryButtonText: {
-    color: '#FFFFFF',
+    color: theme.colors.textInverse,
     fontSize: 16,
     fontWeight: '600',
   },

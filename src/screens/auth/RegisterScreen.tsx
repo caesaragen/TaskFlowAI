@@ -15,6 +15,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme, Theme } from '../../constants/theme';
 
 type RegisterScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Register'>;
 
@@ -23,6 +24,8 @@ interface Props {
 }
 
 export default function RegisterScreen({ navigation }: Props) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -100,11 +103,11 @@ export default function RegisterScreen({ navigation }: Props) {
               onPress={() => navigation.goBack()}
               disabled={isLoading}
             >
-              <Ionicons name="arrow-back" size={24} color="#007AFF" />
+              <Ionicons name="arrow-back" size={24} color={theme.colors.primary} />
             </TouchableOpacity>
             
             <View style={styles.iconContainer}>
-              <Ionicons name="person-add-outline" size={64} color="#007AFF" />
+              <Ionicons name="person-add-outline" size={64} color={theme.colors.primary} />
             </View>
             <Text style={styles.title}>Create Account</Text>
             <Text style={styles.subtitle}>Join TaskFlow AI</Text>
@@ -120,13 +123,13 @@ export default function RegisterScreen({ navigation }: Props) {
                 <Ionicons 
                   name="person-outline" 
                   size={20} 
-                  color="#8E8E93" 
+                  color={theme.colors.placeholder} 
                   style={styles.inputIcon} 
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="John Doe"
-                  placeholderTextColor="#C7C7CC"
+                  placeholderTextColor={theme.colors.placeholder}
                   value={name}
                   onChangeText={setName}
                   autoCapitalize="words"
@@ -145,13 +148,13 @@ export default function RegisterScreen({ navigation }: Props) {
                 <Ionicons 
                   name="mail-outline" 
                   size={20} 
-                  color="#8E8E93" 
+                  color={theme.colors.placeholder} 
                   style={styles.inputIcon} 
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="your@email.com"
-                  placeholderTextColor="#C7C7CC"
+                  placeholderTextColor={theme.colors.placeholder}
                   value={email}
                   onChangeText={setEmail}
                   autoCapitalize="none"
@@ -171,13 +174,13 @@ export default function RegisterScreen({ navigation }: Props) {
                 <Ionicons 
                   name="lock-closed-outline" 
                   size={20} 
-                  color="#8E8E93" 
+                  color={theme.colors.placeholder} 
                   style={styles.inputIcon} 
                 />
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
                   placeholder="At least 6 characters"
-                  placeholderTextColor="#C7C7CC"
+                  placeholderTextColor={theme.colors.placeholder}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
@@ -195,7 +198,7 @@ export default function RegisterScreen({ navigation }: Props) {
                   <Ionicons
                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
-                    color="#8E8E93"
+                    color={theme.colors.placeholder}
                   />
                 </TouchableOpacity>
               </View>
@@ -208,13 +211,13 @@ export default function RegisterScreen({ navigation }: Props) {
                 <Ionicons 
                   name="lock-closed-outline" 
                   size={20} 
-                  color="#8E8E93" 
+                  color={theme.colors.placeholder} 
                   style={styles.inputIcon} 
                 />
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
                   placeholder="Re-enter your password"
-                  placeholderTextColor="#C7C7CC"
+                  placeholderTextColor={theme.colors.placeholder}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
                   secureTextEntry={!showConfirmPassword}
@@ -233,7 +236,7 @@ export default function RegisterScreen({ navigation }: Props) {
                   <Ionicons
                     name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
-                    color="#8E8E93"
+                    color={theme.colors.placeholder}
                   />
                 </TouchableOpacity>
               </View>
@@ -246,7 +249,7 @@ export default function RegisterScreen({ navigation }: Props) {
                 <Ionicons 
                   name={password.length >= 6 ? "checkmark-circle" : "ellipse-outline"} 
                   size={16} 
-                  color={password.length >= 6 ? "#34C759" : "#C7C7CC"} 
+                  color={password.length >= 6 ? theme.colors.success : theme.colors.disabled} 
                 />
                 <Text style={[
                   styles.requirementText,
@@ -259,7 +262,7 @@ export default function RegisterScreen({ navigation }: Props) {
                 <Ionicons 
                   name={password === confirmPassword && password.length > 0 ? "checkmark-circle" : "ellipse-outline"} 
                   size={16} 
-                  color={password === confirmPassword && password.length > 0 ? "#34C759" : "#C7C7CC"} 
+                  color={password === confirmPassword && password.length > 0 ? theme.colors.success : theme.colors.disabled} 
                 />
                 <Text style={[
                   styles.requirementText,
@@ -278,18 +281,18 @@ export default function RegisterScreen({ navigation }: Props) {
               activeOpacity={0.8}
             >
               {isLoading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={theme.colors.textInverse} />
               ) : (
                 <>
                   <Text style={styles.buttonText}>Create Account</Text>
-                  <Ionicons name="checkmark" size={20} color="#fff" />
+                  <Ionicons name="checkmark" size={20} color={theme.colors.textInverse} />
                 </>
               )}
             </TouchableOpacity>
 
             {/* Demo Info */}
             <View style={styles.demoInfo}>
-              <Ionicons name="information-circle-outline" size={16} color="#007AFF" />
+              <Ionicons name="information-circle-outline" size={16} color={theme.colors.primary} />
               <Text style={styles.demoInfoText}>
                 Demo Mode: Your account will be stored in memory
               </Text>
@@ -323,7 +326,7 @@ export default function RegisterScreen({ navigation }: Props) {
                 style={styles.socialButton}
                 disabled={isLoading}
               >
-                <Ionicons name="logo-apple" size={20} color="#000" />
+                <Ionicons name="logo-apple" size={20} color={theme.colors.text} />
                 <Text style={styles.socialButtonText}>Apple</Text>
               </TouchableOpacity>
             </View>
@@ -345,98 +348,98 @@ export default function RegisterScreen({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: theme.colors.surface,
   },
   scrollContent: {
     flexGrow: 1,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: theme.spacing.lg,
   },
   header: {
     alignItems: 'center',
     paddingTop: 60,
-    paddingBottom: 24,
+    paddingBottom: theme.spacing.lg,
   },
   backButton: {
     position: 'absolute',
     left: 0,
     top: 60,
-    padding: 8,
+    padding: theme.spacing.sm,
   },
   iconContainer: {
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 8,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
   },
   subtitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#007AFF',
-    marginBottom: 8,
+    color: theme.colors.primary,
+    marginBottom: theme.spacing.sm,
   },
   description: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: theme.colors.textSecondary,
     textAlign: 'center',
   },
   form: {
     flex: 1,
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
   },
   label: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#000',
-    marginBottom: 8,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.lg,
     borderWidth: 1,
-    borderColor: '#E5E5EA',
-    paddingHorizontal: 16,
+    borderColor: theme.colors.border,
+    paddingHorizontal: theme.spacing.md,
     height: 52,
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: theme.spacing.md,
   },
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#000',
+    color: theme.colors.text,
   },
   passwordInput: {
     paddingRight: 40,
   },
   eyeIcon: {
     position: 'absolute',
-    right: 16,
+    right: theme.spacing.md,
     padding: 4,
   },
   requirementsContainer: {
-    backgroundColor: '#F9F9F9',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 20,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
   },
   requirementsTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#8E8E93',
-    marginBottom: 8,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.sm,
   },
   requirement: {
     flexDirection: 'row',
@@ -445,21 +448,21 @@ const styles = StyleSheet.create({
   },
   requirementText: {
     fontSize: 13,
-    color: '#8E8E93',
-    marginLeft: 8,
+    color: theme.colors.textSecondary,
+    marginLeft: theme.spacing.sm,
   },
   requirementMet: {
-    color: '#34C759',
+    color: theme.colors.success,
   },
   button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 12,
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.borderRadius.lg,
     height: 56,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
-    shadowColor: '#007AFF',
+    marginBottom: theme.spacing.md,
+    shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -469,90 +472,90 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    color: '#fff',
+    color: theme.colors.textInverse,
     fontSize: 18,
     fontWeight: '600',
-    marginRight: 8,
+    marginRight: theme.spacing.sm,
   },
   demoInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
-    padding: 12,
-    backgroundColor: '#E3F2FD',
-    borderRadius: 8,
+    marginBottom: theme.spacing.md,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.primaryLight,
+    borderRadius: theme.borderRadius.md,
   },
   demoInfoText: {
     fontSize: 13,
-    color: '#007AFF',
+    color: theme.colors.primary,
     marginLeft: 6,
     flex: 1,
   },
   termsText: {
     fontSize: 13,
-    color: '#8E8E93',
+    color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
     lineHeight: 18,
   },
   termsLink: {
-    color: '#007AFF',
+    color: theme.colors.primary,
     fontWeight: '600',
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 24,
+    marginVertical: theme.spacing.lg,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: theme.colors.border,
   },
   dividerText: {
-    marginHorizontal: 16,
+    marginHorizontal: theme.spacing.md,
     fontSize: 14,
-    color: '#8E8E93',
+    color: theme.colors.textSecondary,
     fontWeight: '500',
   },
   socialButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 12,
-    marginBottom: 24,
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
   },
   socialButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.lg,
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: theme.colors.border,
     height: 52,
-    paddingHorizontal: 16,
+    paddingHorizontal: theme.spacing.md,
   },
   socialButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
-    marginLeft: 8,
+    color: theme.colors.text,
+    marginLeft: theme.spacing.sm,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingVertical: theme.spacing.lg,
   },
   footerText: {
     fontSize: 15,
-    color: '#8E8E93',
+    color: theme.colors.textSecondary,
   },
   footerLink: {
     fontSize: 15,
-    color: '#007AFF',
+    color: theme.colors.primary,
     fontWeight: '600',
   },
 });

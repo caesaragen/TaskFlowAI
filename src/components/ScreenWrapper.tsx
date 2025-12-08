@@ -3,13 +3,13 @@ import {
   StyleSheet,
   View,
   ViewStyle,
-  useColorScheme,
 } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { useTheme } from '../constants/theme';
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
@@ -29,16 +29,10 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   backgroundColor,
   usePadding = false,
 }) => {
-  const colorScheme = useColorScheme();
+  const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const isDarkMode = colorScheme === 'dark';
 
-  const colors = {
-    background: isDarkMode ? '#121212' : '#FFFFFF',
-    statusBar: isDarkMode ? 'light' : 'dark' as 'light' | 'dark',
-  };
-
-  const bgColor = backgroundColor ?? colors.background;
+  const bgColor = backgroundColor ?? theme.colors.background;
 
   if (usePadding) {
     return (
@@ -55,10 +49,7 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
           style,
         ]}
       >
-        <StatusBar
-          style={colors.statusBar}
-          backgroundColor={bgColor}
-        />
+        <StatusBar style="auto" />
         {children}
       </View>
     );
@@ -69,10 +60,7 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
       style={[styles.container, { backgroundColor: bgColor }, style]}
       edges={edges}
     >
-      <StatusBar
-        style={colors.statusBar}
-        backgroundColor={bgColor}
-      />
+      <StatusBar style="auto" />
       {children}
     </SafeAreaView>
   );

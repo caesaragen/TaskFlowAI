@@ -3,26 +3,30 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Task, TaskStatus, TaskPriority } from "../../types/task";
 import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
+import { useTheme, Theme } from "../../constants/theme";
 
 interface TaskItemProps {
   task: Task;
   onPress: (taskId: string) => void;
 }
 
-const priorityColors = {
-  [TaskPriority.LOW]: "#34C759",
-  [TaskPriority.MEDIUM]: "#FF9500",
-  [TaskPriority.HIGH]: "#FF3B30",
-  [TaskPriority.URGENT]: "#AF52DE",
-};
-
-const statusIcons = {
-  [TaskStatus.TODO]: "ellipse-outline",
-  [TaskStatus.IN_PROGRESS]: "play-circle-outline",
-  [TaskStatus.COMPLETED]: "checkmark-circle",
-};
-
 const TaskItem = React.memo(({ task, onPress }: TaskItemProps) => {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
+  const priorityColors = {
+    [TaskPriority.LOW]: theme.colors.success,
+    [TaskPriority.MEDIUM]: theme.colors.warning,
+    [TaskPriority.HIGH]: theme.colors.error,
+    [TaskPriority.URGENT]: "#AF52DE",
+  };
+
+  const statusIcons = {
+    [TaskStatus.TODO]: "ellipse-outline",
+    [TaskStatus.IN_PROGRESS]: "play-circle-outline",
+    [TaskStatus.COMPLETED]: "checkmark-circle",
+  };
+
   const isCompleted = task.status === TaskStatus.COMPLETED;
 
   return (
@@ -35,7 +39,7 @@ const TaskItem = React.memo(({ task, onPress }: TaskItemProps) => {
         <Ionicons
           name={statusIcons[task.status] as any}
           size={24}
-          color={isCompleted ? "#34C759" : "#007AFF"}
+          color={isCompleted ? theme.colors.success : theme.colors.primary}
         />
         <View style={styles.titleContainer}>
           <Text
@@ -44,11 +48,11 @@ const TaskItem = React.memo(({ task, onPress }: TaskItemProps) => {
           >
             {task.title}
           </Text>
-          {task.description && (
+          {task.description ? (
             <Text style={styles.description} numberOfLines={1}>
               {task.description}
             </Text>
-          )}
+          ) : null}
         </View>
       </View>
 
@@ -78,7 +82,7 @@ const TaskItem = React.memo(({ task, onPress }: TaskItemProps) => {
 
         {task.dueDate && (
           <View style={styles.dueDateContainer}>
-            <Ionicons name="calendar-outline" size={14} color="#8E8E93" />
+            <Ionicons name="calendar-outline" size={14} color={theme.colors.textSecondary} />
             <Text style={styles.dueDateText}>
               {format(new Date(task.dueDate), "MMM dd")}
             </Text>
@@ -91,40 +95,36 @@ const TaskItem = React.memo(({ task, onPress }: TaskItemProps) => {
 
 TaskItem.displayName = "TaskItem";
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    ...theme.shadows.sm,
   },
   header: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 12,
+    marginBottom: theme.spacing.md,
   },
   titleContainer: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: theme.spacing.md,
   },
   title: {
     fontSize: 17,
     fontWeight: "600",
-    color: "#1C1C1E",
+    color: theme.colors.text,
     marginBottom: 4,
   },
   titleCompleted: {
     textDecorationLine: "line-through",
-    color: "#8E8E93",
+    color: theme.colors.textSecondary,
   },
   description: {
     fontSize: 14,
-    color: "#8E8E93",
+    color: theme.colors.textSecondary,
   },
   footer: {
     flexDirection: "row",
@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
   priorityBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
-    marginRight: 8,
+    borderRadius: theme.borderRadius.lg,
+    marginRight: theme.spacing.sm,
   },
   priorityText: {
     fontSize: 12,
@@ -147,14 +147,14 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
   categoryBadge: {
-    backgroundColor: "#E5E5EA",
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: theme.borderRadius.lg,
   },
   categoryText: {
     fontSize: 12,
-    color: "#3A3A3C",
+    color: theme.colors.textSecondary,
   },
   dueDateContainer: {
     flexDirection: "row",
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   },
   dueDateText: {
     fontSize: 12,
-    color: "#8E8E93",
+    color: theme.colors.textSecondary,
     marginLeft: 4,
   },
 });

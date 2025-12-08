@@ -15,6 +15,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../navigation/types';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme, Theme } from '../../constants/theme';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
 
@@ -23,6 +24,8 @@ interface Props {
 }
 
 export default function LoginScreen({ navigation }: Props) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -75,7 +78,7 @@ export default function LoginScreen({ navigation }: Props) {
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.iconContainer}>
-              <Ionicons name="checkmark-done-circle" size={64} color="#007AFF" />
+              <Ionicons name="checkmark-done-circle" size={64} color={theme.colors.primary} />
             </View>
             <Text style={styles.title}>TaskFlow AI</Text>
             <Text style={styles.subtitle}>Welcome back!</Text>
@@ -91,13 +94,13 @@ export default function LoginScreen({ navigation }: Props) {
                 <Ionicons 
                   name="mail-outline" 
                   size={20} 
-                  color="#8E8E93" 
+                  color={theme.colors.placeholder} 
                   style={styles.inputIcon} 
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="your@email.com"
-                  placeholderTextColor="#C7C7CC"
+                  placeholderTextColor={theme.colors.placeholder}
                   value={email}
                   onChangeText={setEmail}
                   autoCapitalize="none"
@@ -117,13 +120,13 @@ export default function LoginScreen({ navigation }: Props) {
                 <Ionicons 
                   name="lock-closed-outline" 
                   size={20} 
-                  color="#8E8E93" 
+                  color={theme.colors.placeholder} 
                   style={styles.inputIcon} 
                 />
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
                   placeholder="Enter your password"
-                  placeholderTextColor="#C7C7CC"
+                  placeholderTextColor={theme.colors.placeholder}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
@@ -142,7 +145,7 @@ export default function LoginScreen({ navigation }: Props) {
                   <Ionicons
                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
-                    color="#8E8E93"
+                    color={theme.colors.placeholder}
                   />
                 </TouchableOpacity>
               </View>
@@ -164,18 +167,18 @@ export default function LoginScreen({ navigation }: Props) {
               activeOpacity={0.8}
             >
               {isLoading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={theme.colors.textInverse} />
               ) : (
                 <>
                   <Text style={styles.buttonText}>Sign In</Text>
-                  <Ionicons name="arrow-forward" size={20} color="#fff" />
+                  <Ionicons name="arrow-forward" size={20} color={theme.colors.textInverse} />
                 </>
               )}
             </TouchableOpacity>
 
             {/* Demo Info */}
             <View style={styles.demoInfo}>
-              <Ionicons name="information-circle-outline" size={16} color="#007AFF" />
+              <Ionicons name="information-circle-outline" size={16} color={theme.colors.primary} />
               <Text style={styles.demoInfoText}>
                 Demo Mode: Create an account first, then login with those credentials
               </Text>
@@ -201,7 +204,7 @@ export default function LoginScreen({ navigation }: Props) {
                 style={styles.socialButton}
                 disabled={isLoading}
               >
-                <Ionicons name="logo-apple" size={20} color="#000" />
+                <Ionicons name="logo-apple" size={20} color={theme.colors.text} />
                 <Text style={styles.socialButtonText}>Apple</Text>
               </TouchableOpacity>
             </View>
@@ -223,99 +226,99 @@ export default function LoginScreen({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.background,
   },
   scrollContent: {
     flexGrow: 1,
   },
   content: {
     flex: 1,
-    padding: 24,
+    padding: theme.spacing.lg,
     justifyContent: 'center',
     minHeight: 600,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: theme.spacing.xl,
   },
   iconContainer: {
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
   },
   title: {
     fontSize: 34,
     fontWeight: 'bold',
-    color: '#007AFF',
-    marginBottom: 8,
+    color: theme.colors.primary,
+    marginBottom: theme.spacing.sm,
     letterSpacing: 0.5,
   },
   subtitle: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#1C1C1E',
-    marginBottom: 8,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
   },
   description: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: theme.colors.textSecondary,
   },
   form: {
     width: '100%',
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: theme.spacing.lg,
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1C1C1E',
-    marginBottom: 8,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F2F2F7',
-    borderRadius: 12,
+    backgroundColor: theme.colors.inputBackground,
+    borderRadius: theme.borderRadius.lg,
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: theme.colors.border,
   },
   inputIcon: {
-    marginLeft: 16,
+    marginLeft: theme.spacing.md,
   },
   input: {
     flex: 1,
-    padding: 16,
-    paddingLeft: 12,
+    padding: theme.spacing.md,
+    paddingLeft: theme.spacing.md,
     fontSize: 16,
-    color: '#1C1C1E',
+    color: theme.colors.text,
   },
   passwordInput: {
     paddingRight: 48,
   },
   eyeIcon: {
     position: 'absolute',
-    right: 16,
+    right: theme.spacing.md,
     padding: 4,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
-    marginBottom: 24,
+    marginBottom: theme.spacing.lg,
   },
   forgotPasswordText: {
     fontSize: 14,
-    color: '#007AFF',
+    color: theme.colors.primary,
     fontWeight: '600',
   },
   button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 12,
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.borderRadius.lg,
     padding: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#007AFF',
+    shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -327,75 +330,75 @@ const styles = StyleSheet.create({
     elevation: 0,
   },
   buttonText: {
-    color: '#fff',
+    color: theme.colors.textInverse,
     fontSize: 18,
     fontWeight: '600',
-    marginRight: 8,
+    marginRight: theme.spacing.sm,
   },
   demoInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: '#E3F2FD',
-    borderRadius: 8,
+    marginTop: theme.spacing.md,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.primaryLight,
+    borderRadius: theme.borderRadius.md,
   },
   demoInfoText: {
     fontSize: 13,
-    color: '#007AFF',
+    color: theme.colors.primary,
     marginLeft: 6,
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 24,
+    marginVertical: theme.spacing.lg,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: theme.colors.border,
   },
   dividerText: {
-    marginHorizontal: 16,
+    marginHorizontal: theme.spacing.md,
     fontSize: 14,
-    color: '#8E8E93',
+    color: theme.colors.textSecondary,
     fontWeight: '600',
   },
   socialButtons: {
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
   },
   socialButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F2F2F7',
-    borderRadius: 12,
+    backgroundColor: theme.colors.inputBackground,
+    borderRadius: theme.borderRadius.lg,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: theme.colors.border,
   },
   socialButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1C1C1E',
-    marginLeft: 8,
+    color: theme.colors.text,
+    marginLeft: theme.spacing.sm,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 8,
+    marginTop: theme.spacing.sm,
   },
   footerText: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: theme.colors.textSecondary,
   },
   linkText: {
     fontSize: 16,
-    color: '#007AFF',
+    color: theme.colors.primary,
     fontWeight: '600',
   },
 });
