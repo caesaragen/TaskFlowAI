@@ -46,32 +46,27 @@ export default function RegisterScreen({ navigation }: Props) {
   }, [error, clearError]);
 
   const handleRegister = async () => {
-    // Basic validation
     if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
       Alert.alert('Validation Error', 'Please fill in all fields');
       return;
     }
 
-    // Name validation
     if (name.trim().length < 2) {
       Alert.alert('Validation Error', 'Name must be at least 2 characters');
       return;
     }
 
-    // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       Alert.alert('Validation Error', 'Please enter a valid email address');
       return;
     }
 
-    // Password validation
     if (password.length < 6) {
       Alert.alert('Validation Error', 'Password must be at least 6 characters');
       return;
     }
 
-    // Confirm password validation
     if (password !== confirmPassword) {
       Alert.alert('Validation Error', 'Passwords do not match');
       return;
@@ -80,7 +75,6 @@ export default function RegisterScreen({ navigation }: Props) {
     try {
       await register(email.trim(), password);
     } catch (err) {
-      // Error handled in useEffect
       console.log(`registration error ${err}`)
     }
   };
@@ -98,7 +92,6 @@ export default function RegisterScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity
               style={styles.backButton}
@@ -116,9 +109,7 @@ export default function RegisterScreen({ navigation }: Props) {
             <Text style={styles.description}>Start managing your tasks efficiently</Text>
           </View>
 
-          {/* Form */}
           <View style={styles.form}>
-            {/* Name Input */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Full Name</Text>
               <View style={styles.inputWrapper}>
@@ -169,7 +160,6 @@ export default function RegisterScreen({ navigation }: Props) {
               </View>
             </View>
 
-            {/* Password Input */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Password</Text>
               <View style={styles.inputWrapper}>
@@ -206,7 +196,6 @@ export default function RegisterScreen({ navigation }: Props) {
               </View>
             </View>
 
-            {/* Confirm Password Input */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Confirm Password</Text>
               <View style={styles.inputWrapper}>
@@ -244,7 +233,6 @@ export default function RegisterScreen({ navigation }: Props) {
               </View>
             </View>
 
-            {/* Password Requirements */}
             <View style={styles.requirementsContainer}>
               <Text style={styles.requirementsTitle}>Password Requirements:</Text>
               <View style={styles.requirement}>
@@ -275,7 +263,6 @@ export default function RegisterScreen({ navigation }: Props) {
               </View>
             </View>
 
-            {/* Sign Up Button */}
             <TouchableOpacity
               style={[styles.button, isLoading && styles.buttonDisabled]}
               onPress={handleRegister}
@@ -292,7 +279,6 @@ export default function RegisterScreen({ navigation }: Props) {
               )}
             </TouchableOpacity>
 
-            {/* Demo Info */}
             <View style={styles.demoInfo}>
               <Ionicons name="information-circle-outline" size={16} color={theme.colors.primary} />
               <Text style={styles.demoInfoText}>
@@ -300,7 +286,6 @@ export default function RegisterScreen({ navigation }: Props) {
               </Text>
             </View>
 
-            {/* Terms and Privacy */}
             <Text style={styles.termsText}>
               By signing up, you agree to our{' '}
               <Text style={styles.termsLink}>Terms of Service</Text>
@@ -308,14 +293,12 @@ export default function RegisterScreen({ navigation }: Props) {
               <Text style={styles.termsLink}>Privacy Policy</Text>
             </Text>
 
-            {/* Divider */}
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
               <Text style={styles.dividerText}>OR</Text>
               <View style={styles.dividerLine} />
             </View>
 
-            {/* Social Sign Up Buttons */}
             <View style={styles.socialButtons}>
               <TouchableOpacity 
                 style={styles.socialButton}
@@ -334,7 +317,6 @@ export default function RegisterScreen({ navigation }: Props) {
             </View>
           </View>
 
-          {/* Sign In Link */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Already have an account? </Text>
             <TouchableOpacity

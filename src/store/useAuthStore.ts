@@ -9,9 +9,11 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  isDemoMode: boolean;
   
   // Actions
   login: (email: string, password: string) => Promise<void>;
+  loginAsDemo: () => void;
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
@@ -25,6 +27,25 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   isLoading: false,
   error: null,
+  isDemoMode: false,
+
+  // Demo mode login - bypasses authentication
+  loginAsDemo: () => {
+    const demoUser: User = {
+      id: 'demo-user-001',
+      email: 'demo@taskflow.ai',
+      name: 'Demo User',
+      createdAt: new Date().toISOString(),
+    };
+    set({
+      user: demoUser,
+      token: 'demo-token',
+      isAuthenticated: true,
+      isLoading: false,
+      error: null,
+      isDemoMode: true,
+    });
+  },
 
   // Login action
   login: async (email: string, password: string) => {
@@ -81,6 +102,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      isDemoMode: false,
     });
   },
 
