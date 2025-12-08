@@ -35,6 +35,21 @@ export default function LoginScreen({ navigation }: Props) {
   const error = useAuthStore((state) => state.error);
   const clearError = useAuthStore((state) => state.clearError);
 
+  const getSalutation = (): { greeting: string; icon: keyof typeof Ionicons.glyphMap } => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return { greeting: 'Good morning', icon: 'sunny-outline' };
+    } else if (hour >= 12 && hour < 17) {
+      return { greeting: 'Good afternoon', icon: 'partly-sunny-outline' };
+    } else if (hour >= 17 && hour < 21) {
+      return { greeting: 'Good evening', icon: 'moon-outline' };
+    } else {
+      return { greeting: 'Good night', icon: 'cloudy-night-outline' };
+    }
+  };
+
+  const salutation = getSalutation();
+
   useEffect(() => {
     if (error) {
       clearError();
@@ -42,13 +57,11 @@ export default function LoginScreen({ navigation }: Props) {
   }, [error, clearError]);
 
   const handleLogin = async () => {
-    // Basic validation
     if (!email.trim() || !password.trim()) {
       Alert.alert('Validation Error', 'Please enter both email and password');
       return;
     }
 
-    // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       Alert.alert('Validation Error', 'Please enter a valid email address');
@@ -58,7 +71,6 @@ export default function LoginScreen({ navigation }: Props) {
     try {
       await login(email.trim(), password);
     } catch (err) {
-      // Error handled in useEffect
       console.log(`login error: ${err}`)
     }
   };
@@ -76,19 +88,20 @@ export default function LoginScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          {/* Header */}
           <View style={styles.header}>
             <View style={styles.iconContainer}>
               <Ionicons name="checkmark-done-circle" size={64} color={theme.colors.primary} />
             </View>
             <Text style={styles.title}>TaskFlow AI</Text>
-            <Text style={styles.subtitle}>Welcome back!</Text>
+            <View style={styles.salutationContainer}>
+              <Ionicons name={salutation.icon} size={20} color={theme.colors.primary} style={styles.salutationIcon} />
+              <Text style={styles.subtitle}>{salutation.greeting}!</Text>
+            </View>
             <Text style={styles.description}>Sign in to manage your tasks</Text>
           </View>
 
           {/* Form */}
           <View style={styles.form}>
-            {/* Email Input */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Email</Text>
               <View style={styles.inputWrapper}>
@@ -114,7 +127,6 @@ export default function LoginScreen({ navigation }: Props) {
               </View>
             </View>
 
-            {/* Password Input */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Password</Text>
               <View style={styles.inputWrapper}>
@@ -152,7 +164,6 @@ export default function LoginScreen({ navigation }: Props) {
               </View>
             </View>
 
-            {/* Forgot Password */}
             <TouchableOpacity 
               style={styles.forgotPassword}
               disabled={isLoading}
@@ -160,7 +171,6 @@ export default function LoginScreen({ navigation }: Props) {
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
 
-            {/* Sign In Button */}
             <TouchableOpacity
               style={[styles.button, isLoading && styles.buttonDisabled]}
               onPress={handleLogin}
@@ -177,7 +187,6 @@ export default function LoginScreen({ navigation }: Props) {
               )}
             </TouchableOpacity>
 
-            {/* Demo Info */}
             <View style={styles.demoInfo}>
               <Ionicons name="information-circle-outline" size={16} color={theme.colors.primary} />
               <Text style={styles.demoInfoText}>
@@ -185,14 +194,12 @@ export default function LoginScreen({ navigation }: Props) {
               </Text>
             </View>
 
-            {/* Divider */}
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
               <Text style={styles.dividerText}>OR</Text>
               <View style={styles.dividerLine} />
             </View>
 
-            {/* Social Login Buttons (Optional - for demo) */}
             <View style={styles.socialButtons}>
               <TouchableOpacity 
                 style={styles.socialButton}
@@ -261,6 +268,14 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     fontWeight: '600',
     color: theme.colors.text,
     marginBottom: theme.spacing.sm,
+  },
+  salutationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  salutationIcon: {
+    marginRight: theme.spacing.xs,
   },
   description: {
     fontSize: 16,
