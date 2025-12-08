@@ -24,6 +24,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.caesaragen.taskflowai"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d309d424-5140-4318-8c92-9b1197fdc5f6"
+      }
     }
   }
 }

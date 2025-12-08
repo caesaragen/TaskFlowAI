@@ -37,7 +37,6 @@ export default function LoginScreen({ navigation }: Props) {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('Login Error', error);
       clearError();
     }
   }, [error, clearError]);
