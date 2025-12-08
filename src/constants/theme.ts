@@ -1,4 +1,4 @@
-import { useColorScheme } from 'react-native';
+import { useThemeStore } from '../store/useThemeStore';
 
 export const lightTheme = {
   colors: {
@@ -170,11 +170,11 @@ export type Theme = typeof lightTheme;
 export type ThemeColors = typeof lightTheme.colors;
 
 /**
- * Hook to get the current theme based on device color scheme
+ * Hook to get the current theme based on user preference or system setting
  */
 export const useTheme = (): Theme => {
-  const colorScheme = useColorScheme();
-  return colorScheme === 'dark' ? darkTheme : lightTheme;
+  const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
+  return resolvedTheme === 'dark' ? darkTheme : lightTheme;
 };
 
 /**

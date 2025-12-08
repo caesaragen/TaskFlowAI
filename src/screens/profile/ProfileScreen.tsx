@@ -12,6 +12,7 @@ import { useTasksStore } from '../../store/useTasksStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, Theme } from '../../constants/theme';
 import ScreenWrapper from '../../components/ScreenWrapper';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -64,6 +65,11 @@ export default function ProfileScreen() {
           <Text style={styles.statValue}>{inProgressTasks}</Text>
           <Text style={styles.statLabel}>In Progress</Text>
         </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Appearance</Text>
+        <ThemeToggle variant="selector" />
       </View>
 
       <View style={styles.section}>

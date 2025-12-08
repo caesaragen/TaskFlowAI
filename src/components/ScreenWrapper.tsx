@@ -49,7 +49,7 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
           style,
         ]}
       >
-        <StatusBar style="auto" />
+        <StatusBar style={theme.colors.statusBar} />
         {children}
       </View>
     );
@@ -60,7 +60,7 @@ const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
       style={[styles.container, { backgroundColor: bgColor }, style]}
       edges={edges}
     >
-      <StatusBar style="auto" />
+      <StatusBar style={theme.colors.statusBar} />
       {children}
     </SafeAreaView>
   );
