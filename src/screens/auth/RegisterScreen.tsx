@@ -16,6 +16,7 @@ import { AuthStackParamList } from '../../navigation/types';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, Theme } from '../../constants/theme';
+import ScreenWrapper from '../../components/ScreenWrapper';
 
 type RegisterScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Register'>;
 
@@ -85,6 +86,7 @@ export default function RegisterScreen({ navigation }: Props) {
   };
 
   return (
+    <ScreenWrapper>
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -345,6 +347,7 @@ export default function RegisterScreen({ navigation }: Props) {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 }
 

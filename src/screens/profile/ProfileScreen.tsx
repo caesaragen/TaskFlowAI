@@ -11,6 +11,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { useTasksStore } from '../../store/useTasksStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, Theme } from '../../constants/theme';
+import ScreenWrapper from '../../components/ScreenWrapper';
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -40,6 +41,7 @@ export default function ProfileScreen() {
   const inProgressTasks = tasks.filter((t) => t.status === 'in_progress').length;
 
   return (
+    <ScreenWrapper>
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.avatarContainer}>
@@ -113,6 +115,7 @@ export default function ProfileScreen() {
         </Text>
       </View>
     </ScrollView>
+    </ScreenWrapper>
   );
 }
 

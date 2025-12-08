@@ -4,19 +4,23 @@ import { Ionicons } from '@expo/vector-icons';
 import { MainStackParamList } from './types';
 import TaskNavigator from './TaskNavigator';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import { useTheme } from '../constants/theme';
 
 const Tab = createBottomTabNavigator<MainStackParamList>();
 
 export default function MainNavigator() {
+  const theme = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#8E8E93',
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.tabBarInactive,
         tabBarStyle: {
+          backgroundColor: theme.colors.tabBar,
           borderTopWidth: 1,
-          borderTopColor: '#E5E5EA',
+          borderTopColor: theme.colors.border,
           paddingTop: 5,
           paddingBottom: 5,
           height: 60,
