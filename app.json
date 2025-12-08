@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "TaskFlow AI",
+    "slug": "taskflow-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.caesaragen.taskflowai"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.caesaragen.taskflowai"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d309d424-5140-4318-8c92-9b1197fdc5f6"
+      }
+    }
+  }
+}
