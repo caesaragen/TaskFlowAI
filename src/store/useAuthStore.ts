@@ -32,6 +32,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const response = await authApi.login(email, password);
       await secureStorage.saveToken(response.token);
+      await secureStorage.saveUserData(response.user);
       set({
         user: response.user,
         token: response.token,
@@ -54,6 +55,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const response = await authApi.register(email, password);
       await secureStorage.saveToken(response.token);
+      await secureStorage.saveUserData(response.user);
       set({
         user: response.user,
         token: response.token,
@@ -72,7 +74,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   // Logout action
   logout: async () => {
-    await secureStorage.deleteToken();
+    await secureStorage.clearAllAuthData();
     set({
       user: null,
       token: null,
@@ -97,17 +99,40 @@ export const useAuthStore = create<AuthState>((set) => ({
         });
         return;
       }
-      const user = await authApi.verifyToken();
-      set({
-        user,
-        token,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      });
+
+      // Try to get cached user data first
+      const cachedUser = await secureStorage.getUserData() as User | null;
+      
+      // Verify token with API
+      try {
+        const user = await authApi.verifyToken();
+        // Update cached user data
+        await secureStorage.saveUserData(user);
+        set({
+          user,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        });
+      } catch {
+        // If API verification fails but we have cached data, use it
+        // This allows offline access
+        if (cachedUser) {
+          set({
+            user: cachedUser,
+            token,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
+        } else {
+          throw new Error('Token verification failed');
+        }
+      }
     } catch (error: any) {
       // Clear any corrupted token data
-      await secureStorage.deleteToken();
+      await secureStorage.clearAllAuthData();
       set({
         user: null,
         token: null,
