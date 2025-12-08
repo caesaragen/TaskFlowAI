@@ -3,6 +3,45 @@ import { render, fireEvent } from '@testing-library/react-native';
 import TaskItem from '../../components/tasks/TaskItem';
 import { Task, TaskStatus, TaskPriority } from '../../types/task';
 
+// Mock the theme hook
+jest.mock('../../constants/theme', () => ({
+  useTheme: () => ({
+    colors: {
+      primary: '#007AFF',
+      success: '#34C759',
+      warning: '#FF9500',
+      error: '#FF3B30',
+      text: '#1A1A1A',
+      textSecondary: '#666666',
+      textTertiary: '#999999',
+      card: '#FFFFFF',
+      surface: '#F5F5F5',
+      border: '#E0E0E0',
+      disabled: '#BDBDBD',
+    },
+    spacing: {
+      xs: 4,
+      sm: 8,
+      md: 16,
+      lg: 24,
+    },
+    borderRadius: {
+      sm: 4,
+      md: 8,
+      lg: 12,
+    },
+    shadows: {
+      sm: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+      },
+    },
+  }),
+}));
+
 describe('TaskItem', () => {
   const mockTask: Task = {
     id: '1',

@@ -1,3 +1,19 @@
+// Mock AsyncStorage
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  setItem: jest.fn(() => Promise.resolve()),
+  getItem: jest.fn(() => Promise.resolve(null)),
+  removeItem: jest.fn(() => Promise.resolve()),
+  clear: jest.fn(() => Promise.resolve()),
+}));
+
+// Mock expo-crypto
+jest.mock('expo-crypto', () => ({
+  digestStringAsync: jest.fn(() => Promise.resolve('mocked-hash')),
+  CryptoDigestAlgorithm: {
+    SHA256: 'SHA-256',
+  },
+}));
+
 import { getTasks, createTask, updateTask, deleteTask } from '../../../services/api/tasks';
 import { TaskStatus, TaskPriority } from '../../../types/task';
 
