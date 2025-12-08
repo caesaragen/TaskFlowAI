@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -28,9 +28,6 @@ export default function TasksScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [isSmartModalVisible, setIsSmartModalVisible] = useState(false);
 
-  useEffect(() => {
-    loadTasks();
-  }, []);
 
   const loadTasks = async () => {
     try {

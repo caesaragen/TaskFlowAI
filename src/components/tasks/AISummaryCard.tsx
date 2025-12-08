@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  Animated,
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, Theme } from '../../constants/theme';
@@ -32,16 +32,8 @@ export const AISummaryCard: React.FC<AISummaryCardProps> = ({ tasks }) => {
   const [summary, setSummary] = useState<TaskSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
-  
-  const animatedHeight = React.useRef(new Animated.Value(0)).current;
 
   const toggleExpand = () => {
-    const toValue = isExpanded ? 0 : 1;
-    Animated.spring(animatedHeight, {
-      toValue,
-      useNativeDriver: false,
-      friction: 8,
-    }).start();
     setIsExpanded(!isExpanded);
     
     // Generate summary on first expand
@@ -77,11 +69,6 @@ export const AISummaryCard: React.FC<AISummaryCardProps> = ({ tasks }) => {
     }
   };
 
-  const maxHeight = animatedHeight.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 400],
-  });
-
   // Don't show if no tasks
   if (tasks.length === 0) {
     return null;
@@ -112,8 +99,13 @@ export const AISummaryCard: React.FC<AISummaryCardProps> = ({ tasks }) => {
         />
       </TouchableOpacity>
 
-      <Animated.View style={[styles.content, { maxHeight }]}>
-        <View style={styles.contentInner}>
+      {isExpanded && (
+        <ScrollView 
+          style={styles.scrollContent}
+          contentContainerStyle={styles.contentInner}
+          showsVerticalScrollIndicator={true}
+          nestedScrollEnabled={true}
+        >
           {isLoading && (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="small" color={theme.colors.primary} />
@@ -180,8 +172,8 @@ export const AISummaryCard: React.FC<AISummaryCardProps> = ({ tasks }) => {
               </TouchableOpacity>
             </>
           )}
-        </View>
-      </Animated.View>
+        </ScrollView>
+      )}
     </View>
   );
 };
@@ -229,6 +221,9 @@ const createStyles = (theme: Theme) =>
     },
     content: {
       overflow: 'hidden',
+    },
+    scrollContent: {
+      maxHeight: 350,
     },
     contentInner: {
       padding: theme.spacing.md,
