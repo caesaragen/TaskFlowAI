@@ -31,6 +31,7 @@ export default function LoginScreen({ navigation }: Props) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const login = useAuthStore((state) => state.login);
+  const loginAsDemo = useAuthStore((state) => state.loginAsDemo);
   const isLoading = useAuthStore((state) => state.isLoading);
   const error = useAuthStore((state) => state.error);
   const clearError = useAuthStore((state) => state.clearError);
@@ -187,34 +188,27 @@ export default function LoginScreen({ navigation }: Props) {
               )}
             </TouchableOpacity>
 
-            <View style={styles.demoInfo}>
-              <Ionicons name="information-circle-outline" size={16} color={theme.colors.primary} />
-              <Text style={styles.demoInfoText}>
-                Demo Mode: Create an account first, then login with those credentials
-              </Text>
-            </View>
-
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
               <Text style={styles.dividerText}>OR</Text>
               <View style={styles.dividerLine} />
             </View>
 
-            <View style={styles.socialButtons}>
-              <TouchableOpacity 
-                style={styles.socialButton}
-                disabled={isLoading}
-              >
-                <Ionicons name="logo-google" size={20} color="#DB4437" />
-                <Text style={styles.socialButtonText}>Google</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.socialButton}
-                disabled={isLoading}
-              >
-                <Ionicons name="logo-apple" size={20} color={theme.colors.text} />
-                <Text style={styles.socialButtonText}>Apple</Text>
-              </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.demoButton}
+              onPress={loginAsDemo}
+              disabled={isLoading}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="flash-outline" size={20} color={theme.colors.primary} />
+              <Text style={styles.demoButtonText}>Try Demo Mode</Text>
+            </TouchableOpacity>
+
+            <View style={styles.demoInfo}>
+              <Ionicons name="information-circle-outline" size={16} color={theme.colors.textSecondary} />
+              <Text style={styles.demoInfoText}>
+                Experience the app without creating an account
+              </Text>
             </View>
 
             {/* Sign Up Link */}
@@ -352,18 +346,33 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     fontWeight: '600',
     marginRight: theme.spacing.sm,
   },
+  demoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.primaryLight,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
+    borderWidth: 2,
+    borderColor: theme.colors.primary,
+    borderStyle: 'dashed',
+  },
+  demoButtonText: {
+    color: theme.colors.primary,
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: theme.spacing.sm,
+  },
   demoInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: theme.spacing.md,
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.primaryLight,
-    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.sm,
   },
   demoInfoText: {
     fontSize: 13,
-    color: theme.colors.primary,
+    color: theme.colors.textSecondary,
     marginLeft: 6,
   },
   divider: {
