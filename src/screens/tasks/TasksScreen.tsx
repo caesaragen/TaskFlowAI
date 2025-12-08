@@ -11,8 +11,11 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTasksStore } from '../../store/useTasksStore';
 import TaskItem from '../../components/tasks/TaskItem';
+import SmartTaskModal from '../../components/tasks/SmartTaskModal';
+import AISummaryCard from '../../components/tasks/AISummaryCard';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import { useTheme, Theme } from '../../constants/theme';
+import { TaskPriority, TaskStatus } from '../../types/task';
 
 export default function TasksScreen() {
   const theme = useTheme();
@@ -21,7 +24,9 @@ export default function TasksScreen() {
   const isLoading = useTasksStore((state) => state.isLoading);
   const error = useTasksStore((state) => state.error);
   const fetchTasks = useTasksStore((state) => state.fetchTasks);
+  const createTask = useTasksStore((state) => state.createTask);
   const [refreshing, setRefreshing] = useState(false);
+  const [isSmartModalVisible, setIsSmartModalVisible] = useState(false);
 
   useEffect(() => {
     loadTasks();
@@ -42,8 +47,30 @@ export default function TasksScreen() {
   };
 
   const handleAddTask = () => {
-    // Navigate to add task screen or show modal
-    console.log('Add task');
+    setIsSmartModalVisible(true);
+  };
+
+  const handleSmartTaskCreate = async (task: {
+    title: string;
+    description: string;
+    priority: TaskPriority;
+    category: string;
+    tags: string[];
+    estimatedDueDate?: string;
+  }) => {
+    try {
+      await createTask({
+        title: task.title,
+        description: task.description,
+        priority: task.priority,
+        status: TaskStatus.TODO,
+        category: task.category,
+        tags: task.tags,
+        dueDate: task.estimatedDueDate,
+      });
+    } catch (err) {
+      console.error('Failed to create task:', err);
+    }
   };
 
   const handleTaskPress = (taskId: string) => {
@@ -75,10 +102,25 @@ export default function TasksScreen() {
     <ScreenWrapper style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>My Tasks</Text>
-        <TouchableOpacity style={styles.addButton} onPress={handleAddTask}>
-          <Ionicons name="add-circle" size={32} color={theme.colors.primary} />
-        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity
+            style={styles.smartAddButton}
+            onPress={handleAddTask}
+            accessibilityLabel="Create task with AI"
+          >
+            <Ionicons name="sparkles" size={22} color={theme.colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.addButton} onPress={handleAddTask}>
+            <Ionicons name="add-circle" size={32} color={theme.colors.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      <SmartTaskModal
+        visible={isSmartModalVisible}
+        onClose={() => setIsSmartModalVisible(false)}
+        onCreateTask={handleSmartTaskCreate}
+      />
 
       {tasks.length === 0 ? (
         <View style={styles.emptyContainer}>
@@ -91,6 +133,7 @@ export default function TasksScreen() {
           data={tasks}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <TaskItem task={item} onPress={handleTaskPress} />}
+          ListHeaderComponent={<AISummaryCard tasks={tasks} />}
           contentContainerStyle={styles.listContent}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
@@ -128,6 +171,16 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 34,
     fontWeight: 'bold',
     color: theme.colors.text,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  smartAddButton: {
+    padding: 8,
+    backgroundColor: theme.colors.primaryLight,
+    borderRadius: 20,
   },
   addButton: {
     padding: 4,

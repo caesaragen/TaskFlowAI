@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import Toast from 'react-native-toast-message';
 import * as secureStorage from '../storage/secureStorage';
 
-const API_URL = 'https://recomend-api.onrender.com/api';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://recomend-api.onrender.com/api';
 
 export const apiClient = axios.create({
   baseURL: API_URL,
