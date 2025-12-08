@@ -1,9 +1,8 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import Toast from 'react-native-toast-message';
 import * as secureStorage from '../storage/secureStorage';
 
-const API_URL = __DEV__ 
-  ? 'http://localhost:3000/api' 
-  : 'https://api.taskflowai.com';
+const API_URL = 'https://recomend-api.onrender.com/api';
 
 export const apiClient = axios.create({
   baseURL: API_URL,
@@ -38,10 +37,24 @@ apiClient.interceptors.response.use(
 );
 
 export const handleApiError = (error: any): string => {
+  let errorMessage: string;
+  
   if (error.response) {
-    return error.response.data?.message || 'An error occurred';
+    errorMessage = error.response.data?.message || 'An error occurred';
   } else if (error.request) {
-    return 'Network error. Please check your connection.';
+    errorMessage = 'Network error. Please check your connection.';
+  } else {
+    errorMessage = error.message || 'An unexpected error occurred';
   }
-  return error.message || 'An unexpected error occurred';
+
+  // Show toast notification
+  Toast.show({
+    type: 'error',
+    text1: 'Error',
+    text2: errorMessage,
+    position: 'top',
+    visibilityTime: 4000,
+  });
+
+  return errorMessage;
 };

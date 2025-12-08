@@ -1,35 +1,41 @@
 import { apiClient, handleApiError } from './client';
 import { User, AuthResponse } from '../../types/user';
 
-// Mock API for demo - replace with real endpoints
-const MOCK_MODE = true;
+// API Response interfaces
+interface ApiAuthResponse {
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    username: string;
+    provider: string;
+  };
+}
 
-const mockDelay = () => new Promise((resolve) => setTimeout(resolve, 1000));
+// Transform API response to app's AuthResponse format
+const transformAuthResponse = (apiResponse: ApiAuthResponse): AuthResponse => {
+  return {
+    token: apiResponse.token,
+    user: {
+      id: apiResponse.user.id,
+      email: apiResponse.user.email,
+      name: apiResponse.user.username,
+      createdAt: new Date().toISOString(),
+    },
+  };
+};
 
 export const login = async (email: string, password: string): Promise<AuthResponse> => {
-  if (MOCK_MODE) {
-    await mockDelay();
-    // Simple validation
-    if (!email || !password) {
-      throw new Error('Invalid credentials');
-    }
-    return {
-      user: {
-        id: '1',
-        email,
-        name: 'Demo User',
-        createdAt: new Date().toISOString(),
-      },
-      token: 'mock-jwt-token-' + Date.now(),
-    };
+  if (!email || !password) {
+    throw new Error('Email and password are required');
   }
 
   try {
-    const response = await apiClient.post<AuthResponse>('/auth/login', {
+    const response = await apiClient.post<ApiAuthResponse>('/auth/login', {
       email,
       password,
     });
-    return response.data;
+    return transformAuthResponse(response.data);
   } catch (error) {
     throw new Error(handleApiError(error));
   }
@@ -37,48 +43,31 @@ export const login = async (email: string, password: string): Promise<AuthRespon
 
 export const register = async (
   email: string,
-  password: string,
-  name: string
+  password: string
 ): Promise<AuthResponse> => {
-  if (MOCK_MODE) {
-    await mockDelay();
-    return {
-      user: {
-        id: '1',
-        email,
-        name,
-        createdAt: new Date().toISOString(),
-      },
-      token: 'mock-jwt-token-' + Date.now(),
-    };
+  if (!email || !password) {
+    throw new Error('Email and password are required');
+  }
+
+  if (password.length < 6) {
+    throw new Error('Password must be at least 6 characters');
   }
 
   try {
-    const response = await apiClient.post<AuthResponse>('/auth/register', {
+    const response = await apiClient.post<ApiAuthResponse>('/auth/register', {
       email,
       password,
-      name,
     });
-    return response.data;
+    return transformAuthResponse(response.data);
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 };
 
-export const verifyToken = async (token: string): Promise<User> => {
-  if (MOCK_MODE) {
-    await mockDelay();
-    return {
-      id: '1',
-      email: 'demo@example.com',
-      name: 'Demo User',
-      createdAt: new Date().toISOString(),
-    };
-  }
-
+export const verifyToken = async (): Promise<User> => {
   try {
-    const response = await apiClient.get<User>('/auth/verify');
-    return response.data;
+    const response = await apiClient.get<ApiAuthResponse>('/auth/me');
+    return transformAuthResponse(response.data).user;
   } catch (error) {
     throw new Error(handleApiError(error));
   }
