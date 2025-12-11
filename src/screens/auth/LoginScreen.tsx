@@ -17,6 +17,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, Theme } from '../../constants/theme';
 import ScreenWrapper from '../../components/ScreenWrapper';
+import { loginSchema, getFirstZodError } from '../../utils/validation';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
 
@@ -51,26 +52,35 @@ export default function LoginScreen({ navigation }: Props) {
 
   const salutation = getSalutation();
 
+  // Clear any previous auth errors when the screen mounts
   useEffect(() => {
-    if (error) {
-      clearError();
-    }
-  }, [error, clearError]);
+    clearError();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+    if (error) clearError();
+  };
+
+  const handlePasswordChange = (text: string) => {
+    setPassword(text);
+    if (error) clearError();
+  };
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Validation Error', 'Please enter both email and password');
-      return;
-    }
+    const result = loginSchema.safeParse({
+      email: email.trim(),
+      password: password,
+    });
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      Alert.alert('Validation Error', 'Please enter a valid email address');
+    if (!result.success) {
+      Alert.alert('Validation Error', getFirstZodError(result.error));
       return;
     }
 
     try {
-      await login(email.trim(), password);
+      await login(result.data.email, result.data.password);
     } catch (err) {
       console.log(`login error: ${err}`)
     }
@@ -117,7 +127,7 @@ export default function LoginScreen({ navigation }: Props) {
                   placeholder="your@email.com"
                   placeholderTextColor={theme.colors.placeholder}
                   value={email}
-                  onChangeText={setEmail}
+                  onChangeText={handleEmailChange}
                   autoCapitalize="none"
                   autoCorrect={false}
                   keyboardType="email-address"
@@ -142,7 +152,7 @@ export default function LoginScreen({ navigation }: Props) {
                   placeholder="Enter your password"
                   placeholderTextColor={theme.colors.placeholder}
                   value={password}
-                  onChangeText={setPassword}
+                  onChangeText={handlePasswordChange}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
