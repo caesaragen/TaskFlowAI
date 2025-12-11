@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { AI_CONFIG, isAIConfigured } from '../../config/ai';
 import { TaskPriority } from '../../types/task';
 
@@ -14,20 +15,53 @@ interface GroqResponse {
   }>;
 }
 
-interface GeneratedTask {
-  title: string;
-  description: string;
-  priority: TaskPriority;
-  category: string;
-  tags: string[];
-  estimatedDueDate?: string;
-}
+// Zod schema for priority with transformation to TaskPriority enum
+const prioritySchema = z
+  .string()
+  .optional()
+  .transform((val): TaskPriority => {
+    const normalized = val?.toLowerCase();
+    switch (normalized) {
+      case 'low':
+        return TaskPriority.LOW;
+      case 'high':
+        return TaskPriority.HIGH;
+      case 'urgent':
+        return TaskPriority.URGENT;
+      default:
+        return TaskPriority.MEDIUM;
+    }
+  });
 
-interface TaskSummary {
-  overview: string;
-  urgentTasks: string[];
-  suggestions: string[];
-}
+// Zod schema for generated task from AI
+const generatedTaskSchema = z.object({
+  title: z.string().max(60).optional().default(''),
+  description: z.string().optional().default(''),
+  priority: prioritySchema,
+  category: z.string().optional().default('Other'),
+  tags: z.array(z.string()).max(5).optional().default([]),
+  estimatedDueDate: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => {
+      if (!val || val === 'null') return undefined;
+      const date = new Date(val);
+      if (Number.isNaN(date.getTime())) return undefined;
+      return date.toISOString();
+    }),
+});
+
+// Zod schema for task summary from AI
+const taskSummarySchema = z.object({
+  overview: z.string().default('Tasks loaded successfully'),
+  urgentTasks: z.array(z.string()).default([]),
+  suggestions: z.array(z.string()).default([]),
+});
+
+// Infer types from schemas
+type GeneratedTask = z.infer<typeof generatedTaskSchema>;
+type TaskSummary = z.infer<typeof taskSummarySchema>;
 
 /**
  * Call the Groq API with chat completion
@@ -98,14 +132,25 @@ IMPORTANT: Return ONLY valid JSON, no additional text.`;
     
     const parsed = JSON.parse(jsonMatch[0]);
     
-    // Validate and normalize the response
+    // Validate and normalize the response using Zod
+    const result = generatedTaskSchema.safeParse(parsed);
+    
+    if (result.success) {
+      return {
+        ...result.data,
+        title: result.data.title || idea,
+      };
+    }
+    
+    // If validation fails, return a basic task
+    console.error('Zod validation failed:', result.error.issues);
     return {
-      title: parsed.title || idea,
-      description: parsed.description || '',
-      priority: validatePriority(parsed.priority),
-      category: parsed.category || 'Other',
-      tags: Array.isArray(parsed.tags) ? parsed.tags.slice(0, 5) : [],
-      estimatedDueDate: parsed.estimatedDueDate || undefined,
+      title: idea,
+      description: '',
+      priority: TaskPriority.MEDIUM,
+      category: 'Other',
+      tags: [],
+      estimatedDueDate: undefined,
     };
   } catch (error) {
     console.error('Failed to parse AI response:', response);
@@ -116,6 +161,7 @@ IMPORTANT: Return ONLY valid JSON, no additional text.`;
       priority: TaskPriority.MEDIUM,
       category: 'Other',
       tags: [],
+      estimatedDueDate: undefined,
     };
   }
 };
@@ -163,10 +209,19 @@ IMPORTANT: Return ONLY valid JSON, no additional text.`;
     
     const parsed = JSON.parse(jsonMatch[0]);
     
+    // Validate and normalize the response using Zod
+    const result = taskSummarySchema.safeParse(parsed);
+    
+    if (result.success) {
+      return result.data;
+    }
+    
+    // If validation fails, return a fallback summary
+    console.error('Zod validation failed:', result.error.issues);
     return {
-      overview: parsed.overview || 'Tasks loaded successfully',
-      urgentTasks: Array.isArray(parsed.urgentTasks) ? parsed.urgentTasks : [],
-      suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
+      overview: `You have ${tasks.length} tasks to manage.`,
+      urgentTasks: tasks.filter(t => t.priority === 'high' || t.priority === 'urgent').map(t => t.title),
+      suggestions: ['Review your high-priority tasks first'],
     };
   } catch (error) {
     console.error('Failed to parse summary response:', response);
@@ -175,22 +230,5 @@ IMPORTANT: Return ONLY valid JSON, no additional text.`;
       urgentTasks: tasks.filter(t => t.priority === 'high' || t.priority === 'urgent').map(t => t.title),
       suggestions: ['Review your high-priority tasks first'],
     };
-  }
-};
-
-/**
- * Validate and normalize priority value
- */
-const validatePriority = (priority: string): TaskPriority => {
-  const normalized = priority?.toLowerCase();
-  switch (normalized) {
-    case 'low':
-      return TaskPriority.LOW;
-    case 'high':
-      return TaskPriority.HIGH;
-    case 'urgent':
-      return TaskPriority.URGENT;
-    default:
-      return TaskPriority.MEDIUM;
   }
 };
