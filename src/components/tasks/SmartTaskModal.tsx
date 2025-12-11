@@ -206,14 +206,18 @@ export const SmartTaskModal: React.FC<SmartTaskModalProps> = ({
                   </View>
                 )}
 
-                {generatedTask.estimatedDueDate && (
-                  <View style={styles.dueDateContainer}>
-                    <Ionicons name="calendar-outline" size={16} color={theme.colors.textSecondary} />
-                    <Text style={styles.dueDateText}>
-                      Suggested due: {new Date(generatedTask.estimatedDueDate).toLocaleDateString()}
-                    </Text>
-                  </View>
-                )}
+                {generatedTask.estimatedDueDate && (() => {
+                  const date = new Date(generatedTask.estimatedDueDate);
+                  if (Number.isNaN(date.getTime())) return null;
+                  return (
+                    <View style={styles.dueDateContainer}>
+                      <Ionicons name="calendar-outline" size={16} color={theme.colors.textSecondary} />
+                      <Text style={styles.dueDateText}>
+                        Suggested due: {date.toLocaleDateString()}
+                      </Text>
+                    </View>
+                  );
+                })()}
               </View>
 
               <View style={styles.actionButtons}>

@@ -122,7 +122,7 @@ describe('LoginScreen', () => {
     await waitFor(() => {
       expect(mockAlert).toHaveBeenCalledWith(
         'Validation Error',
-        'Please enter both email and password'
+        'Email is required'
       );
     });
   });

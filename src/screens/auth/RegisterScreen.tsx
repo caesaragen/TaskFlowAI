@@ -17,6 +17,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, Theme } from '../../constants/theme';
 import ScreenWrapper from '../../components/ScreenWrapper';
+import { registerSchema, getFirstZodError } from '../../utils/validation';
 
 type RegisterScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Register'>;
 
@@ -46,34 +47,20 @@ export default function RegisterScreen({ navigation }: Props) {
   }, [error, clearError]);
 
   const handleRegister = async () => {
-    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-      Alert.alert('Validation Error', 'Please fill in all fields');
-      return;
-    }
+    const result = registerSchema.safeParse({
+      name: name.trim(),
+      email: email.trim(),
+      password: password,
+      confirmPassword: confirmPassword,
+    });
 
-    if (name.trim().length < 2) {
-      Alert.alert('Validation Error', 'Name must be at least 2 characters');
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      Alert.alert('Validation Error', 'Please enter a valid email address');
-      return;
-    }
-
-    if (password.length < 6) {
-      Alert.alert('Validation Error', 'Password must be at least 6 characters');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert('Validation Error', 'Passwords do not match');
+    if (!result.success) {
+      Alert.alert('Validation Error', getFirstZodError(result.error));
       return;
     }
 
     try {
-      await register(email.trim(), password);
+      await register(result.data.email, result.data.password);
     } catch (err) {
       console.log(`registration error ${err}`)
     }

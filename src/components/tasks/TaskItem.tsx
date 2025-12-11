@@ -80,14 +80,18 @@ const TaskItem = React.memo(({ task, onPress }: TaskItemProps) => {
           )}
         </View>
 
-        {task.dueDate && (
-          <View style={styles.dueDateContainer}>
-            <Ionicons name="calendar-outline" size={14} color={theme.colors.textSecondary} />
-            <Text style={styles.dueDateText}>
-              {format(new Date(task.dueDate), "MMM dd")}
-            </Text>
-          </View>
-        )}
+        {task.dueDate && (() => {
+          const date = new Date(task.dueDate);
+          if (Number.isNaN(date.getTime())) return null;
+          return (
+            <View style={styles.dueDateContainer}>
+              <Ionicons name="calendar-outline" size={14} color={theme.colors.textSecondary} />
+              <Text style={styles.dueDateText}>
+                {format(date, "MMM dd")}
+              </Text>
+            </View>
+          );
+        })()}
       </View>
     </TouchableOpacity>
   );
